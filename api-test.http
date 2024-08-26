@@ -1,0 +1,204 @@
+
+
+@AUTH_TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByZXNpZGVudGNvbXBhbnkiLCJlbXBsb3llZU51bWJlciI6MTAwMiwiaWF0IjoxNzI0NjQzNzg2LCJleHAiOjE3MjUyNDg1ODZ9.6aMDlLCl8sNQbZ8iujLdiL-SO2MB1sLbuyeL_3bwGt0
+
+
+# Login User
+POST http://localhost:8000/api/users/login
+Content-Type: application/json
+
+{
+    "username": "presidentcompany",
+    "password": "presidentcompany"
+}
+
+
+
+###
+
+# Register User
+POST http://localhost:8000/api/users/register
+Content-Type: application/json
+
+{
+    "username": "stafftest",
+    "password": "stafftest",
+    "employeeNumber": 1006
+}
+
+###
+
+# Get All Employees
+GET http://localhost:8000/api/employees
+Authorization: Bearer {{AUTH_TOKEN}}
+###
+
+#Get employee by id
+
+GET http://localhost:8000/api/employees/1008
+Authorization : Bearer {{ AUTH_TOKEN }}
+
+
+###
+# Create Employee
+POST http://localhost:8000/api/employees
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+{
+  "employeeNumber": 2024,
+  "lastName": "Martinez",
+  "firstName": "Sarah",
+  "extension": "x8901",
+  "email": "sarah.martinez@example.com",
+  "officeCode": "2",
+  "reportsTo": 10034,
+  "jobTitle": "Sales Rep",
+  "role": 4,
+  "customers": [
+    {
+      "customerNumber": 2024,
+      "customerName": "Acme Corp",
+      "contactLastName": "Clark",
+      "contactFirstName": "Robert",
+      "phone": "442055550003",
+      "addressLine1": "321 Elm St",
+      "addressLine2": null,
+      "city": "London",
+      "state": "England",
+      "postalCode": "SW1A 1AA",
+      "country": "UK",
+      "salesRepEmployeeNumber": 2024, 
+      "creditLimit": 45000
+    }
+  ]
+}
+
+###
+
+# Update an employee by ID
+PUT http://localhost:8000/api/employees/1008
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+ {
+    "extension": "x8901",
+    "email": "sarah.martinez1@example.com",
+    "officeCode": "2",
+    "reportsTo": 10034,
+    "jobTitle": "Sales Rep",
+    "role": 4
+  }
+###
+
+# Delete an employee by ID
+DELETE http://localhost:8000/api/employees/1006
+Authorization: Bearer {{AUTH_TOKEN}}
+
+
+
+###
+
+#-------------------------------------------------------------------------------
+
+# Get all customers
+GET http://localhost:8000/api/customers
+Authorization: Bearer {{AUTH_TOKEN}}
+
+
+###
+
+# Create a new customer
+POST http://localhost:8000/api/customers
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+{
+    "customerNumber": 1995111,
+    "customerName": "Acme Corp",
+    "contactLastName": "Clark",
+    "contactFirstName": "Robert",
+    "phone": "+44-20-5555-0003",
+    "addressLine1": "321 Elm St",
+    "addressLine2": null,
+    "city": "London",
+    "state": "England",
+    "postalCode": "SW1A 1AA",
+    "country": "UK",
+    "salesRepEmployeeNumber": 1004,
+    "creditLimit": "45000"
+}
+
+###
+
+# Get a specific customer by ID
+GET http://localhost:8000/api/customers/19951
+Accept: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+###
+
+# Update a customer by ID
+PUT http://localhost:8000/api/customers/19951
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+{
+    "customerName": "Acme Corp updated",
+    "contactLastName": "Clark",
+    "contactFirstName": "Robert",
+    "phone": "765432109",
+    "addressLine1": "321 Elm St",
+    "addressLine2": null,
+    "city": "London",
+    "state": "England",
+    "postalCode": "SW1A 1AA",
+    "country": "UK",
+    "salesRepEmployeeNumber": 1004,
+    "creditLimit": "45000"
+}
+
+###
+
+# Delete a customer by ID
+DELETE http://localhost:8000/api/customers/19951
+Authorization: Bearer {{AUTH_TOKEN}}
+
+###
+
+# Get All Logs
+GET http://localhost:8000/api/logs
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+###
+
+
+# Get Log by level, user, time period, log content.
+GET http://localhost:8000/api/logs?level=Info&user=presidentcompany&startTime=2024-08-01&endTime=2024-08-31&content=
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+
+
+###
+
+PUT http://localhost:8000/api/logs/66caf8ddc1c379d96be4cb93/level
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+{
+    "level": "Warning"
+}
+
+###
+
+GET http://localhost:8000/api/report/sales?start_date=2024-01-01&end_date=2024-01-31&officeCode=2
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+###
+
+GET http://localhost:8000/api/report/new-customers?start_date=2024-01-01&end_date=2024-01-31&employeeNumber=1008
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}

@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model customers {
+  customerNumber         Int        @id
+  customerName           String?    @db.VarChar(50)
+  contactLastName        String?    @db.VarChar(50)
+  contactFirstName       String?    @db.VarChar(50)
+  phone                  String?    @db.VarChar(20)
+  addressLine1           String?    @db.VarChar(100)
+  addressLine2           String?    @db.VarChar(100)
+  city                   String?    @db.VarChar(50)
+  state                  String?    @db.VarChar(50)
+  postalCode             String?    @db.VarChar(15)
+  country                String?    @db.VarChar(50)
+  salesRepEmployeeNumber Int?
+  creditLimit            Decimal?   @db.Decimal(10, 2)
+  employees              employees? @relation(fields: [salesRepEmployeeNumber], references: [employeeNumber], onDelete: Cascade, map: "customers_ibfk_1")
+
+  orders                 orders[]
+
+  @@index([salesRepEmployeeNumber], map: "salesRepEmployeeNumber")
+}
+
+model employees {
+  employeeNumber            Int         @id
+  lastName                  String?     @db.VarChar(50)
+  firstName                 String?     @db.VarChar(50)
+  extension                 String?     @db.VarChar(10)
+  email                     String?     @db.VarChar(100)
+  officeCode                String?     @db.VarChar(10)
+  reportsTo                 Int?
+  jobTitle                  String?     @db.VarChar(100)
+  role                      Int?
+  customers                 customers[]
+  offices                   offices?    @relation(fields: [officeCode], references: [officeCode], onDelete: NoAction, onUpdate: NoAction, map: "employees_ibfk_1")
+  role_employees_roleTorole role?       @relation("employees_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role")
+  users                     users[]
+
+  @@index([role], map: "fk_role")
+  @@index([officeCode], map: "officeCode")
+}
+
+
+model offices {
+  officeCode   String      @id @db.VarChar(10)
+  city         String?     @db.VarChar(50)
+  phone        String?     @db.VarChar(20)
+  addressLine1 String?     @db.VarChar(100)
+  addressLine2 String?     @db.VarChar(100)
+  state        String?     @db.VarChar(50)
+  country      String?     @db.VarChar(50)
+  postalCode   String?     @db.VarChar(15)
+  territory    String?     @db.VarChar(10)
+  employees    employees[]
+}
+
+model role {
+  id                             Int         @id @default(autoincrement())
+  role                           String      @unique(map: "role") @db.VarChar(50)
+  employees_employees_roleTorole employees[] @relation("employees_roleTorole")
+}
+
+model users {
+  username       String     @id @db.VarChar(50)
+  password       String     @db.VarChar(255)
+  employeeNumber Int?
+  employees      employees? @relation(fields: [employeeNumber], references: [employeeNumber], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+
+  @@index([employeeNumber], map: "employeeNumber")
+}
+
+
+model products {
+  productCode        String      @id @db.VarChar(15)
+  productName        String      @db.VarChar(70)
+  productScale       String      @db.VarChar(10)
+  productVendor      String      @db.VarChar(50)
+  productDescription String      @db.Text
+  quantityInStock    Int
+  buyPrice           Decimal     @db.Decimal(10, 2)
+  MSRP               Decimal     @db.Decimal(10, 2)
+  productLine        String      @db.VarChar(50)
+  orderDetails       orderdetails[]
+
+  productlines       productlines @relation(fields: [productLine], references: [productLine], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model productlines {
+  productLine    String      @id @db.VarChar(50)
+  textDescription String      @db.Text
+  htmlDescription String      @db.Text
+  image           String?      @db.Text
+
+  products        products[]
+}
+
+model orderdetails {
+  orderNumber     Int
+  productCode     String @db.VarChar(15)
+  quantityOrdered Int
+  priceEach       Decimal @db.Decimal(10, 2)
+  orderLineNumber Int
+  @@id([orderNumber, productCode])
+
+  orders          orders @relation(fields: [orderNumber], references: [orderNumber], onDelete: NoAction, onUpdate: NoAction)
+  products        products @relation(fields: [productCode], references: [productCode], onDelete: NoAction, onUpdate: NoAction)
+}
+
+
+
+model orders {
+  orderNumber     Int @id
+  orderDate       DateTime
+  requiredDate    DateTime
+  shippedDate     DateTime
+  status          String @db.VarChar(15)
+  comments        String @db.Text
+  orderDetails    orderdetails[]
+
+  customerNumber  Int
+  customers       customers @relation(fields: [customerNumber], references: [customerNumber], onDelete: NoAction, onUpdate: NoAction)
+}
